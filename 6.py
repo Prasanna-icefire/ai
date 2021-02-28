@@ -2,7 +2,7 @@
 def backtrack(x, enemies, domain, assigned):
     if -1 not in assigned: # checking for unassigned people
         return x
-    v = 999
+    v = 999 #just a value assumed
  
     for i in range(len(domain)):               
         if v > len(domain[i]) and assigned[i] != 1:# finding unassigned people
@@ -11,9 +11,9 @@ def backtrack(x, enemies, domain, assigned):
     
     for i in domain[v]:                     
         min = 1000
-        for j in enemies[v]:  
-            temp = len(domain[j])
-            if i in domain[j]:
+        for j in enemies[v]:  #seeing through enemies of 0th next 1st person and 3rd per .....n person
+            temp = len(domain[j]) #seeing the size of the nth person.....1st 0th
+            if i in domain[j]: #checking if i value is present in jth enemy
                 temp -= 1
             if temp < min:
                 min = temp
@@ -58,10 +58,10 @@ if __name__ == "__main__":
         enemies[i[1]].append(i[0])
  
     for i in range(people):
-        j = list(set(enemies[i])) # deduplicating the each row       
+        j = list(set(enemies[i])) # deduplicating the each row  and arrenges in assccending order     
         enemies[i] = j
-    assigned = [-1 for i in range(people)]    
-    domain = [[x for x in range(tables)] for i in range(people)]  
+    assigned = [-1 for i in range(people)]    #initially assign all to -1. Those ppl initially without table assigned to -1
+    domain = [[x for x in range(tables)] for i in range(people)]  #initially domain for all people are all tables.....so assigning all tables to each person as a domain
  
     res = backtrack(x, enemies, domain, assigned)  
  
