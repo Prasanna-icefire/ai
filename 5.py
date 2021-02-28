@@ -1,46 +1,31 @@
-#alphaBeta
-tree = [[[5, 1, 2], [8, -8, -9]], [[9, 4, 5], [-3, 4, 3]]]
-root = 0
-pruned = 0
+MAX = 1000
+MIN = -1000
 
-def children(branch, depth, alpha, beta):
-    global tree
-    global root
-    global pruned
-    i = 0
-    for child in branch:
-        if type(child) is list:
-            (nalpha, nbeta) = children(child, depth + 1, alpha, beta)
-            if depth % 2 == 1:
-                beta = nalpha if nalpha < beta else beta
-            else:
-                alpha = nbeta if nbeta > alpha else alpha
-            branch[i] = alpha if depth % 2 == 0 else beta
-            i += 1
-        else:
-            if depth % 2 == 0 and alpha < child:
-                alpha = child
-            if depth % 2 == 1 and beta > child:
-                beta = child
-            if alpha >= beta:
-                pruned += 1
+
+def alpha_beta(depth, nodeIndex, maximizingPlayer, values, alpha, beta):
+    if depth == 3:
+        return values[nodeIndex]
+    if maximizingPlayer:
+        best = MIN
+        for i in range(0, 2):
+            val = alpha_beta(depth+1, nodeIndex*2+i,
+                             False, values, alpha, beta)
+            best = max(best, val)
+            alpha = max(alpha, best)
+            if beta <= alpha:
                 break
-    if depth == root:
-        tree = alpha if root == 0 else beta
-    return (alpha, beta)
+        return best
+    else:
+        best = MAX
+        for i in range(0, 2):
+            val = alpha_beta(depth+1, nodeIndex*2+i, True, values, alpha, beta)
+            best = min(best, val)
+            beta = min(beta, best)
+            if beta <= alpha:
+                break
+        return best
 
-def alpha_beta(in_tree=tree, start=root, up=-15, low=15):
-    global tree
-    global pruned
-    global root
-    (alpha, beta) = children(tree, start, up, low)
-    return (alpha, beta, tree, pruned)
-    
 
-if __name__ == "__main__":
-    res=[]
-    (alpha, beta, tree, pruned)=alpha_beta(None)
-    
-    print ("(alpha, beta): ", alpha, beta)
-    print ("Result: ", tree)
-    print ("Times pruned: ", pruned)
+if __name__ == '__main__':
+    values = [3, 5, 6, 9, 1, 2, 0, -1]
+    print("The optimal value is: ", alpha_beta(0, 0, True, values, MIN, MAX))
