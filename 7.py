@@ -1,72 +1,98 @@
-#XOX
 import os
- 
-turn = 'X'
-win = False
-spaces = 9
- 
-def draw(board):
-    for i in range(6, -1, -3):
-        print(' ' + board[i] + '|' +
-              board[i+1] + '|' + board[i+2])
- 
-def takeinput(board, spaces, turn):
-    pos = -1
-    print(turn + "'s turn:")
- 
-    while pos == -1:
-        try:
-            print("Pick position 1-9:")
-            pos = int(input())
-            if(pos < 1 or pos > 9):
-                pos = -1
-            elif board[pos - 1] != ' ':
-                pos = -1
-        except:
-            print("enter a valid position")
-    spaces -= 1
-    board[pos - 1] = turn
-    if turn == 'X':
-        turn = 'O'
-    else:
-        turn = 'X'
-    return board, spaces, turn
- 
-def checkwin(board):
-    # could probably make this better
-    for i in range(0, 3):
-        # rows
-        r = i*3
-        if board[r] != ' ':
-            if board[r] == board[r+1] and board[r+1] == board[r+2]:
-                return board[r]
-        # columns
-        if board[i] != ' ':
-            if board[i] == board[i+3] and board[i] == board[i+6]:
-                return board[i]
-    # diagonals
-    if board[0] != ' ':
-        if (board[0] == board[4] and board[4] == board[8]):
-            return board[0]
-    if board[2] != ' ':
-        if (board[2] == board[4] and board[4] == board[6]):
-            return board[2]
- 
-    return 0
- 
-board = [' ']*91
+import time
 
- 
-while not win and spaces:
-    draw(board)
-    board, spaces, turn = takeinput(board, spaces, turn)
-    win = checkwin(board)
+board = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+player = 1
+
+########win Flags##########
+Win = 1
+Draw = -1
+Running = 0
+Stop = 1
+###########################
+Game = Running
+Mark = 'X'
+
+# This Function Draws Game Board
+
+
+def DrawBoard():
+    print(" %c | %c | %c " % (board[1], board[2], board[3]))
+    print(" _ | _ | _  ")
+    print(" %c | %c | %c " % (board[4], board[5], board[6]))
+    print(" _ | _ | _ ")
+    print(" %c | %c | %c " % (board[7], board[8], board[9]))
+    print("   |   |   ")
+
+# This Function Checks position is empty or not
+
+
+def CheckPosition(x):
+    if(board[x] == ' '):
+        return True
+    else:
+        return False
+
+# This Function Checks player has won or not
+
+
+def CheckWin():
+    global Game
+    # Horizontal winning condition
+    if(board[1] == board[2] and board[2] == board[3] and board[1] != ' '):
+        Game = Win
+    elif(board[4] == board[5] and board[5] == board[6] and board[4] != ' '):
+        Game = Win
+    elif(board[7] == board[8] and board[8] == board[9] and board[7] != ' '):
+        Game = Win
+    # Vertical Winning Condition
+    elif(board[1] == board[4] and board[4] == board[7] and board[1] != ' '):
+        Game = Win
+    elif(board[2] == board[5] and board[5] == board[8] and board[2] != ' '):
+        Game = Win
+    elif(board[3] == board[6] and board[6] == board[9] and board[3] != ' '):
+        Game = Win
+    # Diagonal Winning Condition
+    elif(board[1] == board[5] and board[5] == board[9] and board[5] != ' '):
+        Game = Win
+    elif(board[3] == board[5] and board[5] == board[7] and board[5] != ' '):
+        Game = Win
+    # Match Tie or Draw Condition
+    elif(board[1] != ' ' and board[2] != ' ' and board[3] != ' ' and board[4] != ' ' and board[5] != ' ' and board[6] != ' ' and board[7] != ' ' and board[8] != ' ' and board[9] != ' '):
+        Game = Draw
+    else:
+        Game = Running
+
+
+print("Tic-Tac-Toe")
+print("Player 1 [X] --- Player 2 [O]\n")
+print()
+print()
+print("Please Wait...")
+time.sleep(3)
+while(Game == Running):
     os.system('cls')
- 
-draw(board)
- 
-if not win and not spaces:
-    print("draw")
-elif win:
-    print(f'{win} wins')
-    input()
+    DrawBoard()
+    if(player % 2 != 0):
+        print("Player 1's chance")
+        Mark = 'X'
+    else:
+        print("Player 2's chance")
+        Mark = 'O'
+    choice = int(
+        input("Enter the position between [1-9] where you want to mark : "))
+    if(CheckPosition(choice)):
+        board[choice] = Mark
+        player += 1
+        CheckWin()
+
+# os.system('cls')
+DrawBoard()
+if(Game == Draw):
+    print("Game Draw")
+elif(Game == Win):
+    player -= 1
+    if(player % 2 != 0):
+        print("Player 1 Won")
+    else:
+        print("Player 2 Won")
